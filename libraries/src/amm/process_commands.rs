@@ -249,7 +249,6 @@ pub fn process_amm_commands(
                 result.max_coin_amount,
                 result.max_pc_amount,
                 base_side,
-                result.another_min_amount,
             )?;
             instructions.extend(vec![instruction]);
 
@@ -341,8 +340,6 @@ pub fn process_amm_commands(
                 &result.market_asks,
                 None,
                 input_lp_amount,
-                result.receive_min_coin_amount,
-                result.receive_min_pc_amount,
             )?;
             instructions.extend(vec![instruction]);
 

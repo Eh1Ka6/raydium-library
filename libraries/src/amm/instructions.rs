@@ -73,7 +73,6 @@ pub fn deposit(
         max_coin_amount,
         max_pc_amount,
         base_side,
-        None,
     )?;
     Ok(deposit_instruction)
 }
@@ -111,8 +110,6 @@ pub fn withdraw(
         &market_keys.asks,
         None,
         withdraw_lp_amount,
-        None,
-        None,
     )?;
     Ok(withdraw_instruction)
 }
