@@ -508,11 +508,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c02d123df017efcdfbd739ef81735b36c5ba83ec3c59c80a9d7ecc718f92e50"
 
 [[package]]
-name = "arrform"
-version = "0.1.1"
-source = "git+https://github.com/raydium-io/arrform#fdbb0cfe18eadbff99cc8cd63f1b5a43df70e665"
-
-[[package]]
 name = "ascii"
 version = "0.9.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3115,22 +3110,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "raydium-cp-swap"
-version = "0.1.0"
-source = "git+https://github.com/raydium-io/raydium-cp-swap#34a208a4738b0ac070f32ac51a7c00f0982df764"
-dependencies = [
- "anchor-lang",
- "anchor-spl",
- "arrayref",
- "bytemuck",
- "solana-security-txt",
- "spl-math",
- "spl-memo",
- "spl-token 4.0.0",
- "uint",
-]
-
-[[package]]
 name = "raydium-library"
 version = "0.1.0"
 dependencies = [
@@ -3146,12 +3125,10 @@ dependencies = [
  "clap 4.5.20",
  "rand 0.7.3",
  "raydium-amm-v3",
- "raydium-cp-swap",
- "raydium_amm",
  "safe-transmute",
  "serde",
  "serde_json",
- "serum_dex 0.5.10 (git+https://github.com/Big-spoon/openbook-dex.git?branch=patch-sol-18)",
+ "serum_dex",
  "solana-account-decoder",
  "solana-client",
  "solana-sdk",
@@ -3161,29 +3138,6 @@ dependencies = [
  "spl-token 4.0.0",
  "spl-token-2022 0.9.0",
  "toml 0.8.19",
-]
-
-[[package]]
-name = "raydium_amm"
-version = "0.3.0"
-source = "git+https://github.com/reactive-biscuit/raydium-amm.git?branch=patch/solana-v1.18.16#b4423f5b834dea4eebbc2f9e82550d12dcc810c3"
-dependencies = [
- "arrayref",
- "arrform",
- "base64 0.13.1",
- "bincode",
- "bytemuck",
- "num-derive 0.3.3",
- "num-traits",
- "safe-transmute",
- "serde",
- "serde_json",
- "serum_dex 0.5.10 (git+https://github.com/reactive-biscuit/openbook-dex.git?branch=patch/solana-v1.18.16)",
- "solana-program",
- "spl-associated-token-account",
- "spl-token 4.0.0",
- "thiserror",
- "uint",
 ]
 
 [[package]]
@@ -3616,32 +3570,6 @@ dependencies = [
 name = "serum_dex"
 version = "0.5.10"
 source = "git+https://github.com/Big-spoon/openbook-dex.git?branch=patch-sol-18#b61b18c982e94bd23551880b02908a7993a48f32"
-dependencies = [
- "anchor-lang",
- "arrayref",
- "bincode",
- "bytemuck",
- "byteorder",
- "default-env",
- "enumflags2",
- "field-offset",
- "itertools",
- "num-traits",
- "num_enum 0.5.11",
- "safe-transmute",
- "serde",
- "solana-program",
- "solana-security-txt",
- "spl-token 3.5.0",
- "static_assertions",
- "thiserror",
- "without-alloc",
-]
-
-[[package]]
-name = "serum_dex"
-version = "0.5.10"
-source = "git+https://github.com/reactive-biscuit/openbook-dex.git?branch=patch/solana-v1.18.16#87e84ec28cf791f2e8f7fc98f66d13e34cc4da48"
 dependencies = [
  "anchor-lang",
  "arrayref",
@@ -4592,20 +4520,6 @@ dependencies = [
  "sha2 0.10.8",
  "syn 2.0.87",
  "thiserror",
-]
-
-[[package]]
-name = "spl-math"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "102d87a7608c793497fa3e85e9d0e24a33be06a94fb029b2cd30d794295f8110"
-dependencies = [
- "borsh 0.10.4",
- "num-derive 0.3.3",
- "num-traits",
- "solana-program",
- "thiserror",
- "uint",
 ]
 
 [[package]]

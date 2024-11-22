@@ -7,25 +7,15 @@ use solana_sdk::{commitment_config::CommitmentConfig, signer::Signer};
 use std::sync::Arc;
 
 use raydium_library::{
-    amm::{self, AmmCommands},
     clmm::{self, ClmmCommands},
     common::{self, types::CommonConfig},
-    cpswap::{self, CpSwapCommands},
 };
 /// commands
 #[derive(Debug, Parser)]
 pub enum Command {
-    CPSWAP {
-        #[clap(subcommand)]
-        subcmd: CpSwapCommands,
-    },
     CLMM {
         #[clap(subcommand)]
         subcmd: ClmmCommands,
-    },
-    AMM {
-        #[clap(subcommand)]
-        subcmd: AmmCommands,
     },
 }
 
@@ -55,10 +45,6 @@ pub fn entry(opts: Opts) -> Result<()> {
     }
 
     let instructions = match opts.command {
-        Command::CPSWAP { subcmd } => {
-            cpswap::process_cpswap_commands(subcmd, &config, &mut signing_keypairs).unwrap()
-        }
-        Command::AMM { subcmd } => amm::process_amm_commands(subcmd, &config).unwrap(),
         Command::CLMM { subcmd } => {
             clmm::process_clmm_commands(subcmd, &config, &mut signing_keypairs).unwrap()
         }

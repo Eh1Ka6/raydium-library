@@ -6,8 +6,6 @@ edition = "2021"
 [features]
 devnet = [
     "raydium-amm-v3/devnet",
-    "raydium-cp-swap/devnet",
-    "raydium_amm/devnet",
 ]
 
 [dependencies]
@@ -19,15 +17,8 @@ raydium-amm-v3 = { git = "https://github.com/Big-spoon/raydium-clmm", branch = "
     "no-entrypoint",
 ] }
 
-raydium-cp-swap = { git = "https://github.com/raydium-io/raydium-cp-swap", features = [
-    "client",
-    "no-entrypoint",
-] }
 serum_dex = { version = "0.5.10", git = "https://github.com/Big-spoon/openbook-dex.git", branch = "patch-sol-18",  features = [
     "client", "no-entrypoint"
-] }
-raydium_amm = { git = "https://github.com/reactive-biscuit/raydium-amm.git", branch = "patch/solana-v1.18.16", default-features = false, features = [
-    "client",
 ] }
 
 spl-token = { version = "=4.0.0", features = ["no-entrypoint"] }
