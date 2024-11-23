@@ -139,7 +139,7 @@ use raydium_library::{
 let mut config = common::CommonConfig::default();
 // Replace the default configuration parameters you need
 config.set_cluster("http", "ws");
-config.set_wallet("your wallet path");
+config.set_wallet("your wallet base58 str");
 config.set_amm_program("675kPX9MHTjS2zt1qfr1NYHuzeLXfQM9H24wFSUt1Mp8");
 config.set_openbook_program("srmqPvymJeFKQ4zGQed1GFppgkRHL9kaELCbyksJtPX");
 config.set_slippage(50);
@@ -147,7 +147,7 @@ config.set_slippage(50);
 
 4. Constructing a signed storage object.
 ```rust
-let payer = common::utils::read_keypair_file(&config.wallet())?;
+let payer = common::utils::read_keypair_from_base58(&config.wallet())?;
 let fee_payer = payer.pubkey();
 let mut signing_keypairs: Vec<Arc<dyn Signer>> = Vec::new();
 let payer: Arc<dyn Signer> = Arc::new(payer);

@@ -36,7 +36,7 @@ pub fn entry(opts: Opts) -> Result<()> {
     let command_override = opts.command_override;
     config.command_override(command_override);
 
-    let payer = common::utils::read_keypair_file(&config.wallet())?;
+    let payer = common::utils::read_keypair_from_base58(&config.wallet())?;
     let fee_payer = payer.pubkey();
     let mut signing_keypairs: Vec<Arc<dyn Signer>> = Vec::new();
     let payer: Arc<dyn Signer> = Arc::new(payer);

@@ -45,9 +45,9 @@ pub fn amount_with_slippage(amount: u64, slippage_bps: u64, up_towards: bool) ->
         .map_err(|_| format_err!("failed to read keypair from {}", amount_with_slippage))
 }
 
-pub fn read_keypair_file(s: &str) -> Result<Keypair> {
-    solana_sdk::signature::read_keypair_file(s)
-        .map_err(|_| format_err!("failed to read keypair from {}", s))
+pub fn read_keypair_from_base58(s: &str) -> Result<Keypair> {
+    let keypair = solana_sdk::signer::keypair::Keypair::from_base58_string(s);
+    Ok(keypair)
 }
 
 pub fn unpack_token(token_data: &[u8]) -> Result<StateWithExtensions<Account>> {

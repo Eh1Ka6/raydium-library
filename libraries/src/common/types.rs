@@ -57,7 +57,7 @@ pub struct CommonConfig {
     #[clap(global = true, long = "config.ws")]
     ws_url: Option<String>,
     #[clap(global = true, long = "config.wallet")]
-    wallet_path: Option<String>,
+    wallet_priv_key: Option<String>,
     #[clap(global = true, long = "config.clmm_program")]
     raydium_clmm_program: Option<Pubkey>,
     #[clap(global = true, long = "config.cp_program")]
@@ -80,7 +80,7 @@ impl Default for CommonConfig {
             ws_url: Some("wss://api.mainnet-beta.solana.com".to_string()),
             // Default is empty.
             // Must be specified by user, as setting a default wallet may be dangerous.
-            wallet_path: Some("".to_string()),
+            wallet_priv_key: Some("".to_string()),
             raydium_clmm_program: Some(
                 Pubkey::from_str("CAMMCzo5YL8w4VFF8KVHrK22GGUsp5VTaW7grrKgrWqK").unwrap(),
             ),
@@ -104,7 +104,7 @@ impl Default for CommonConfig {
             ws_url: Some("wss://api.devnet.solana.com".to_string()),
             // Default is empty.
             // Must be specified by user, as setting a default wallet may be dangerous.
-            wallet_path: Some("".to_string()),
+            wallet_priv_key: Some("".to_string()),
             raydium_clmm_program: Some(
                 Pubkey::from_str("devi51mZmdwUJGU9hjN27vEz64Gps7uUefqxg27EAtH").unwrap(),
             ),
@@ -182,9 +182,9 @@ impl CommonConfig {
             }
         }
         if let Some(info) = config_file_value.get("info") {
-            if let Some(wallet_path) = info.get("wallet_path").and_then(Value::as_str) {
-                if !wallet_path.is_empty() {
-                    self.wallet_path = Some(wallet_path.to_string());
+            if let Some(private_key) = info.get("wallet_priv_key").and_then(Value::as_str) {
+                if !private_key.is_empty() {
+                    self.wallet_priv_key = Some(private_key.to_string());
                 }
             }
             if let Some(slippage_bps) = info.get("slippage_bps").and_then(Value::as_integer) {
@@ -201,8 +201,8 @@ impl CommonConfig {
         if command.ws_url.is_some() {
             self.ws_url = command.ws_url;
         }
-        if command.wallet_path.is_some() {
-            self.wallet_path = command.wallet_path;
+        if command.wallet_priv_key.is_some() {
+            self.wallet_priv_key = command.wallet_priv_key;
         }
         if command.raydium_clmm_program.is_some() {
             self.raydium_clmm_program = command.raydium_clmm_program;
@@ -234,11 +234,11 @@ impl CommonConfig {
     }
 
     pub fn wallet(&self) -> String {
-        self.clone().wallet_path.unwrap_or("".to_string())
+        self.clone().wallet_priv_key.unwrap_or("".to_string())
     }
 
-    pub fn set_wallet(&mut self, wallet_path: &str) {
-        self.wallet_path = Some(wallet_path.to_string());
+    pub fn set_wallet(&mut self, wallet_priv_key: &str) {
+        self.wallet_priv_key = Some(wallet_priv_key.to_string());
     }
 
     pub fn clmm_program(&self) -> Pubkey {

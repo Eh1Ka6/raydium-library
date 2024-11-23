@@ -94,7 +94,7 @@ pub fn process_clmm_commands(
     signing_keypairs: &mut Vec<Arc<dyn Signer>>,
 ) -> Result<Option<Vec<Instruction>>> {
     let rpc_client = RpcClient::new(config.cluster().url());
-    let wallet_keypair = common::utils::read_keypair_file(&config.wallet())?;
+    let wallet_keypair = common::utils::read_keypair_from_base58(&config.wallet())?;
     let payer_pubkey = wallet_keypair.pubkey();
     let payer: Arc<dyn Signer> = Arc::new(wallet_keypair);
     if !signing_keypairs.contains(&payer) {
