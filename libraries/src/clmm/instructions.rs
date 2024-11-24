@@ -25,8 +25,7 @@ pub fn create_pool_instr(
     sqrt_price_x64: u128,
     open_time: u64,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -117,8 +116,7 @@ pub fn open_position_instr(
     tick_array_upper_start_index: i32,
     with_metadata: bool,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -224,8 +222,8 @@ pub fn increase_liquidity_instr(
     tick_array_lower_start_index: i32,
     tick_array_upper_start_index: i32,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
+
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -312,8 +310,7 @@ pub fn decrease_liquidity_instr(
     tick_array_lower_start_index: i32,
     tick_array_upper_start_index: i32,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -384,8 +381,7 @@ pub fn close_personal_position_instr(
     config: &CommonConfig,
     nft_mint_key: Pubkey,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -428,8 +424,7 @@ pub fn swap_instr(
     sqrt_price_limit_x64: Option<u128>,
     is_base_input: bool,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -477,8 +472,7 @@ pub fn swap_v2_instr(
     sqrt_price_limit_x64: Option<u128>,
     is_base_input: bool,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -525,8 +519,7 @@ pub fn initialize_reward_instr(
     end_time: u64,
     emissions_per_second_x64: u128,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
@@ -569,8 +562,7 @@ pub fn set_reward_params_instr(
     end_time: u64,
     emissions_per_second_x64: u128,
 ) -> Result<Vec<Instruction>> {
-    let wallet = solana_sdk::signature::read_keypair_file(config.wallet())
-        .map_err(|_| format_err!("failed to read keypair from {}", config.wallet()))?;
+    let wallet = solana_sdk::signer::keypair::Keypair::from_base58_string(&config.wallet());
     let cluster = config.cluster();
     // Client.
     let client = Client::new(cluster, Rc::new(wallet));
