@@ -37,7 +37,7 @@ pub struct ClmmLiquidityChangeResult {
     pub tick_array_upper_start_index: i32,
 }
 
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Default, Clone, Debug, PartialEq)]
 pub struct ClmmSwapChangeResult {
     pub pool_amm_config: Pubkey,
     pub pool_id: Pubkey,
