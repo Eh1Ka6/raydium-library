@@ -9,6 +9,8 @@ use common::rpc;
 use raydium_amm::state::Loadable;
 use solana_client::rpc_client::RpcClient;
 use solana_sdk::pubkey::Pubkey;
+use std::error::Error;
+use std::fmt;
 
 pub fn calculate_deposit_info(
     rpc_client: &RpcClient,
@@ -368,13 +370,38 @@ pub fn get_amm_pda_keys(
         nonce,
     })
 }
+// Define a custom error type
+#[derive(Debug)]
+pub struct LoadAmmKeysError {
+    message: String,
+}
+
+impl LoadAmmKeysError {
+    fn new(message: String) -> Self {
+        LoadAmmKeysError { message }
+    }
+}
+
+impl fmt::Display for LoadAmmKeysError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{}", self.message)
+    }
+}
+
+impl Error for LoadAmmKeysError {}
+
 
 pub fn load_amm_keys(
     client: &RpcClient,
     amm_program: &Pubkey,
     amm_pool: &Pubkey,
-) -> Result<AmmKeys> {
-    let amm = rpc::get_account::<raydium_amm::state::AmmInfo>(client, &amm_pool)?.unwrap();
+) -> Result<AmmKeys, LoadAmmKeysError> {
+    // Fetch the AMM account
+    let amm = rpc::get_account::<raydium_amm::state::AmmInfo>(client, amm_pool)
+        .map_err(|e| LoadAmmKeysError::new(format!("Failed to fetch AMM account for pool {}: {}", amm_pool, e)))?
+        .ok_or_else(|| LoadAmmKeysError::new(format!("AMM account not found for pool {}", amm_pool)))?;
+
+    // Construct and return the AMM keys
     Ok(AmmKeys {
         amm_pool: *amm_pool,
         amm_target: amm.target_orders,
@@ -388,7 +415,8 @@ pub fn load_amm_keys(
             amm_program,
             raydium_amm::processor::AUTHORITY_AMM,
             amm.nonce as u8,
-        )?,
+        )
+        .map_err(|e| LoadAmmKeysError::new(format!("Failed to calculate AMM authority ID: {}", e)))?,
         market: amm.market,
         market_program: amm.market_program,
         nonce: amm.nonce as u8,
