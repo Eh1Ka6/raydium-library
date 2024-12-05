@@ -185,7 +185,7 @@ pub fn calculate_swap_info(
     rpc_client: &RpcClient,
     amm_program: Pubkey,
     pool_id: Pubkey,
-    user_input_token: Pubkey,
+    user_input_token_account: Pubkey,
     amount_specified: u64,
     slippage_bps: u64,
     base_in: bool,
@@ -198,11 +198,10 @@ pub fn calculate_swap_info(
         pool_id,
         amm_keys.amm_pc_vault,
         amm_keys.amm_coin_vault,
-        user_input_token,
     ];
     let rsps = common::rpc::get_multiple_accounts(&rpc_client, &load_pubkeys).unwrap();
     let accounts = array_ref![rsps, 0, 4];
-    let [amm_account, amm_pc_vault_account, amm_coin_vault_account, user_input_token_account] =
+    let [amm_account, amm_pc_vault_account, amm_coin_vault_account] =
         accounts;
 
     let amm_state =
