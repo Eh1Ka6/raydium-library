@@ -181,52 +181,73 @@ pub fn calculate_withdraw_info(
     })
 }
 
+
 pub fn calculate_swap_info(
     rpc_client: &RpcClient,
     amm_program: Pubkey,
     pool_id: Pubkey,
-    user_input_token_account: Pubkey,
+    user_input_token: Pubkey,
     amount_specified: u64,
     slippage_bps: u64,
     base_in: bool,
-) -> Result<AmmSwapInfoResult> {
-    // load amm keys
-    let amm_keys = load_amm_keys(&rpc_client, &amm_program, &pool_id).unwrap();
-    // reload accounts data to calculate amm pool vault amount
-    // get multiple accounts at the same time to ensure data consistency
+) -> Result<AmmSwapInfoResult, String> {
+    // Load AMM keys
+    let amm_keys = load_amm_keys(rpc_client, &amm_program, &pool_id)
+        .map_err(|e| format!("Failed to load AMM keys: {}", e))?;
+
+    // Reload accounts data to calculate AMM pool vault amount
     let load_pubkeys = vec![
         pool_id,
         amm_keys.amm_pc_vault,
         amm_keys.amm_coin_vault,
+        user_input_token,
     ];
-    let rsps = common::rpc::get_multiple_accounts(&rpc_client, &load_pubkeys).unwrap();
+    let rsps = common::rpc::get_multiple_accounts(rpc_client, &load_pubkeys)
+        .map_err(|e| format!("Failed to fetch multiple accounts: {}", e))?;
+
+    // Validate and unpack accounts
     let accounts = array_ref![rsps, 0, 4];
-    let [amm_account, amm_pc_vault_account, amm_coin_vault_account] =
-        accounts;
+    let amm_account = accounts[0]
+        .as_ref()
+        .ok_or("Missing AMM account data")?;
+    let amm_pc_vault_account = accounts[1]
+        .as_ref()
+        .ok_or("Missing PC vault account data")?;
+    let amm_coin_vault_account = accounts[2]
+        .as_ref()
+        .ok_or("Missing Coin vault account data")?;
+    let user_input_token_account = accounts[3]
+        .as_ref()
+        .ok_or("Missing user input token account data")?;
 
-    let amm_state =
-        raydium_amm::state::AmmInfo::load_from_bytes(&amm_account.as_ref().unwrap().data).unwrap();
-    let amm_state = amm_state.clone();
-    let amm_pc_vault = common::unpack_token(&amm_pc_vault_account.as_ref().unwrap().data).unwrap();
-    let amm_coin_vault =
-        common::unpack_token(&amm_coin_vault_account.as_ref().unwrap().data).unwrap();
-    let user_input_token_info =
-        common::unpack_token(&user_input_token_account.as_ref().unwrap().data).unwrap();
+    // Load AMM state
+    let amm_state = raydium_amm::state::AmmInfo::load_from_bytes(&amm_account.data)
+        .map_err(|e| format!("Failed to load AMM state: {}", e))?
+        .clone();
 
-    // assert for amm not share any liquidity to openbook
-    assert_eq!(
-        raydium_amm::state::AmmStatus::from_u64(amm_state.status).orderbook_permission(),
-        false
-    );
-    // calculate pool vault amount without take pnl
+    // Unpack token data
+    let amm_pc_vault = common::unpack_token(&amm_pc_vault_account.data)
+        .map_err(|e| format!("Failed to unpack PC vault account: {}", e))?;
+    let amm_coin_vault = common::unpack_token(&amm_coin_vault_account.data)
+        .map_err(|e| format!("Failed to unpack Coin vault account: {}", e))?;
+    let user_input_token_info = common::unpack_token(&user_input_token_account.data)
+        .map_err(|e| format!("Failed to unpack user input token account: {}", e))?;
+
+    // Check AMM status
+    if raydium_amm::state::AmmStatus::from_u64(amm_state.status).orderbook_permission() {
+        return Err("AMM is sharing liquidity with an order book, which is not allowed".to_string());
+    }
+
+    // Calculate pool vault amount without taking PnL
     let (amm_pool_pc_vault_amount, amm_pool_coin_vault_amount) =
         raydium_amm::math::Calculator::calc_total_without_take_pnl_no_orderbook(
             amm_pc_vault.base.amount,
             amm_coin_vault.base.amount,
             &amm_state,
         )
-        .unwrap();
+        .map_err(|e| format!("Failed to calculate pool vault amounts: {}", e))?;
 
+    // Determine swap direction and mints
     let (swap_direction, input_mint, output_mint) =
         if user_input_token_info.base.mint == amm_keys.amm_coin_mint {
             (
@@ -241,8 +262,10 @@ pub fn calculate_swap_info(
                 amm_keys.amm_coin_mint,
             )
         } else {
-            panic!("input tokens not match pool vaults");
+            return Err("Input tokens do not match pool vaults".to_string());
         };
+
+    // Calculate swap with slippage
     let other_amount_threshold = amm::amm_math::swap_with_slippage(
         amm_pool_pc_vault_amount,
         amm_pool_coin_vault_amount,
@@ -252,8 +275,10 @@ pub fn calculate_swap_info(
         amount_specified,
         base_in,
         slippage_bps,
-    )?;
+    )
+    .map_err(|e| format!("Failed to calculate swap with slippage: {}", e))?;
 
+    // Return the result
     Ok(AmmSwapInfoResult {
         pool_id,
         amm_authority: amm_keys.amm_authority,

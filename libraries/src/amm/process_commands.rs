@@ -361,7 +361,7 @@ pub fn process_amm_commands(
                 amount_specified,
                 config.slippage(),
                 base_in,
-            )?;
+            ).unwrap();
             let mut instructions = Vec::new();
             let user_output_token = if let Some(user_output_token) = user_output_token {
                 user_output_token
