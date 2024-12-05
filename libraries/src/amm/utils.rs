@@ -214,7 +214,7 @@ pub fn calculate_swap_info(
         .ok_or("Missing AMM account data")?;
     let amm_pc_vault_account = accounts[1]
         .as_ref()
-        .ok_or("Missing PC vault account data")?;
+        .ok_or(format!("Missing  amm_pc_vault_account {:?}", amm_keys))?;
     let amm_coin_vault_account = accounts[2]
         .as_ref()
         .ok_or("Missing Coin vault account data")?;
